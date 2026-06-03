@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextNexus - Premium Communication & Gaming</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #06b6d4;
+            --accent-glow: rgba(6, 182, 212, 0.3);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: rgba(6, 182, 212, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+        }
+
+        nav button:hover {
+            color: var(--accent);
+        }
+
+        nav button.active {
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: calc(0.5rem - 2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            padding: 6rem 2rem;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Home Section */
+        #home {
+            margin-top: 4rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 6rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        /* Auth Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #1a1f35);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 0 50px rgba(6, 182, 212, 0.2);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 2rem;
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .about-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .about-card:hover {
+            border-color: var(--accent);
+            background: rgba(6, 182, 212, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .about-card h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .about-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Credits */
+        .credits-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .credits-section h2 {
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+
+        .credit-item {
+            margin-bottom: 2rem;
+        }
+
+        .credit-item .role {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .credit-item .name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 4rem 0;
+        }
+
+        .contact-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .contact-form textarea {
+            grid-column: 1 / -1;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        /* Games Section */
+        #games {
+            margin-top: 4rem;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .game-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .game-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .game-card p {
+            padding: 1rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Coming Soon */
+        .coming-soon {
+            text-align: center;
+            padding: 6rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .coming-soon h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .coming-soon p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .coming-soon-emoji {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 1rem;
+            }
+
+            nav button {
+                font-size: 0.9rem;
+                padding: 0.25rem 0.5rem;
+            }
+
+            .contact-form {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+
+        /* Profile Section */
+        .profile-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            text-align: left;
+        }
+
+        .user-info p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(6, 182, 212, 0.1);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .require-auth {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .require-auth h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">TextNexus</div>
+            <ul>
+                <li><button onclick="showSection('home')" class="nav-btn active">Home</button></li>
+                <li><button onclick="showSection('texting')" class="nav-btn">Texting</button></li>
+                <li><button onclick="showSection('games')" class="nav-btn">Games</button></li>
+            </ul>
+            <div class="auth-buttons">
+                <div id="authStatus" style="display: none; display: flex; gap: 1rem; align-items: center;">
+                    <span id="userEmail"></span>
+                    <button class="btn btn-secondary" onclick="logout()">Sign Out</button>
+                </div>
+                <div id="notAuthStatus">
+                    <button class="btn btn-primary" onclick="openSignUp()">Sign Up</button>
+                    <button class="btn btn-secondary" onclick="openSignIn()">Sign In</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="section active">
+        <div class="container">
+            <div class="hero">
+                <h1>Welcome to TextNexus</h1>
+                <p>The future of communication and entertainment, powered by innovation</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="openSignUp()">Get Started</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Learn More</button>
+                </div>
+            </div>
+
+            <div id="about" style="margin-top: 6rem;">
+                <h2 style="text-align: center; margin-bottom: 4rem; font-size: 2.5rem;">About TextNexus</h2>
+                
+                <div class="about-grid">
+                    <div class="about-card">
+                        <h3><i class="fas fa-comments"></i> Premium Texting</h3>
+                        <p>Experience seamless, encrypted messaging with advanced features. Connect with friends and family on a secure platform built for modern communication.</p>
+                    </div>
+                    <div class="about-card">
+                        <h3><i class="fas fa-gamepad"></i> Gaming Hub</h3>
+                        <p>Discover and play an extensive collection of games. From casual to competitive, find your next favorite game in our curated selection.</p>
+                    </div>
+                    <div class="about-card">
+                        <h3><i class="fas fa-brain"></i> Powered by Scribble AI</h3>
+                        <p>TextNexus X Scribble AI brings intelligent features to your fingertips. Smart suggestions, AI-powered insights, and next-gen communication tools.</p>
+                    </div>
+                </div>
+
+                <div class="credits-section">
+                    <h2>Credits & Team</h2>
+                    <div class="credit-item">
+                        <div class="role">Owner & Founder</div>
+                        <div class="name">Brody Williams</div>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 2rem 0;">
+                    <div class="credit-item">
+                        <div class="role">Partnership</div>
+                        <div class="name">Scribble AI</div>
+                        <p style="color: var(--text-secondary); margin-top: 0.5rem;">Collaborating to bring advanced AI features</p>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 2rem 0;">
+                    <div class="credit-item">
+                        <div class="role">More roles coming soon...</div>
+                    </div>
+                </div>
+
+                <div class="contact-section">
+                    <h2 style="color: var(--accent); margin-bottom: 1rem;">Get In Touch</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Have feedback, ideas, or inquiries? We'd love to hear from you!</p>
+                    
+                    <form id="contactForm" onsubmit="handleContact(event)" class="contact-form">
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input type="text" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Your Email</label>
+                            <input type="email" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Subject</label>
+                            <input type="text" required placeholder="What's this about?">
+                        </div>
+                        <textarea required placeholder="Tell us what you think..."></textarea>
+                        <button type="submit" class="btn btn-primary" style="grid-column: 1 / -1; margin-top: 1rem;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="texting" class="section">
+        <div class="coming-soon">
+            <div class="coming-soon-emoji">💬</div>
+            <h2>Coming Soon</h2>
+            <p>Our premium texting platform is under development and will be available very soon.</p>
+            <p style="font-size: 1rem; color: var(--text-secondary);">Stay tuned for updates and early access opportunities!</p>
+        </div>
+    </section>
+
+    <section id="games" class="section">
+        <div class="container">
+            <h1 style="margin-bottom: 1rem;">Game Library</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 3rem;">Explore our collection of exciting games</p>
+            
+            <div id="gamesContent"></div>
+        </div>
+    </section>
+
+    <div id="signInModal" class="modal">
+        <div class="modal-content" style="position: relative;">
+            <button class="close-modal" onclick="closeModal('signInModal')">&times;</button>
+            <h2>Sign In</h2>
+            <form id="signInForm" onsubmit="handleSignIn(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signInEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signInPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
+                Don't have an account? <button style="background: none; border: none; color: var(--accent); cursor: pointer; font-weight: 600;" onclick="switchModal('signInModal', 'signUpModal')">Sign Up</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="signUpModal" class="modal">
+        <div class="modal-content" style="position: relative;">
+            <button class="close-modal" onclick="closeModal('signUpModal')">&times;</button>
+            <h2>Create Account</h2>
+            <form id="signUpForm" onsubmit="handleSignUp(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signUpEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signUpPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signUpPasswordConfirm" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
+                Already have an account? <button style="background: none; border: none; color: var(--accent); cursor: pointer; font-weight: 600;" onclick="switchModal('signUpModal', 'signInModal')">Sign In</button>
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 TextNexus. All rights reserved.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">TextNexus X Scribble AI</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+        // Firebase Configuration (Using your verified app keys)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAO_ffupJOIMPE9m4ARtaqSzC1vGDkIAco",
+            authDomain: "nexus-web-development-official.firebaseapp.com",
+            databaseURL: "https://nexus-web-development-official-default-rtdb.firebaseio.com",
+            projectId: "nexus-web-development-official",
+            storageBucket: "nexus-web-development-official.firebasestorage.app",
+            messagingSenderId: "553556577139",
+            appId: "1:553556577139:web:d00fe480cba3f1a8999306",
+            measurementId: "G-NJW8Y3WGQ0"
+        };
+
+        // Initialize Firebase Global Instances
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Games Data
+        const gamesData = [
+            { id: 1, name: "Flappy Bird", icon: "🐦" },
+            { id: 2, name: "2048", icon: "2️⃣" },
+            { id: 3, name: "Snake", icon: "🐍" },
+            { id: 4, name: "Breakout", icon: "🎮" },
+            { id: 5, name: "Pong", icon: "🏓" },
+            { id: 6, name: "Tetris", icon: "🧩" },
+            { id: 7, name: "Pac-Man", icon: "👾" },
+            { id: 8, name: "Space Invaders", icon: "🛸" },
+            { id: 9, name: "Minesweeper", icon: "💣" },
+            { id: 10, name: "Candy Crush", icon: "🍬" },
+            { id: 11, name: "Chess", icon: "♟️" },
